@@ -2,7 +2,7 @@ version: "3.1"
 
 services:
   cron:
-    image: que-me-cobran-scrap
+    image: ghcr.io/matyseitour/que-me-cobran-scrapper:latest
     restart: unless-stopped
     volumes:
       - "./.env:/app/.env"
