@@ -1,20 +1,21 @@
 import puppeteer from "puppeteer";
 import { PrismaClient } from "@prisma/client";
+import log from "./utils/log.js";
 
 const prisma = new PrismaClient();
 
 const netflix = async () => {
     try {
-        console.log("antes de abrir el navegador")
+        log("antes de abrir el navegador")
         const browser = await puppeteer.launch({
             headless: "new",
             // executablePath: '/usr/bin/google-chrome',
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
-        console.log("browser")
+        log("browser")
         const page = await browser.newPage();
         await page.goto("https://help.netflix.com/es/node/24926/ar");
-        console.log("va a la pagina")
+        log("va a la pagina")
         await page.waitForSelector(
             "body > div > div > div > div > div > section > div > div > div:nth-child(3) > ul > li > p"
         );
@@ -29,7 +30,7 @@ const netflix = async () => {
 
         browser.close();
 
-        console.log("cierra el navegador")
+        log("cierra el navegador")
 
         const data = result.map((item) => {
             let plan = {
@@ -60,10 +61,10 @@ const netflix = async () => {
             return plan;
         });
 
-        console.log("antes de ejecutar prisma")
+        log("antes de ejecutar prisma")
 
         for (const plan of data) {
-            console.log("empieza a ejecutar netflix")
+            log("empieza a ejecutar netflix")
             await prisma.plan.update({
                 where: {
                     id: plan.id,

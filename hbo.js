@@ -1,5 +1,7 @@
 import puppeteer from "puppeteer";
 import { PrismaClient } from "@prisma/client";
+import sleep from "./utils/sleep.js";
+import log from "./utils/log.js";
 
 const prisma = new PrismaClient();
 
@@ -9,8 +11,11 @@ const hbo = async () => {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     try {
+        log("antes de abrir el navegador")
         const page = await browser.newPage();
         await page.goto("https://www.hbomax.com/ar/es");
+        log("hacia la página de hbo")
+        await sleep(2000);
         await page.waitForSelector(".plan-price");
         const result = await page.evaluate((prices) => {
             let arr = [];
@@ -24,7 +29,11 @@ const hbo = async () => {
             );
         }, ".plan-price");
 
+        log("antes de cerrar el navegador de hbo")
+
         await browser.close();
+
+        log("el navegador de hbo se cerró")
 
         const hboPlans = result.map((item, index) => {
             if (index == 0) {
@@ -79,8 +88,10 @@ const hbo = async () => {
             }
         });
 
+        log("antes de actualizar los datos de hbo en la db ")
+
         for (const plan of hboPlans) {
-            console.log("empieza a ejecutar hbo")
+            console.log("empieza a ejecutar el prisma hbo")
             await prisma.plan.update({
                 where: {
                     id: plan.id,
