@@ -18,7 +18,7 @@ const netflix = async () => {
         log("browser")
         const page = await browser.newPage();
         await onlyHtml(page)
-        await page.goto("https://help.netflix.com/es/node/24asdsad926/ar");
+        await page.goto("https://help.netflix.com/es/node/24926/ar");
         log("va a la pagina")
         await sleep(2000);
         await page.waitForSelector(
@@ -86,7 +86,5 @@ const netflix = async () => {
     }
 
 }
-
-netflix();
 
 export default netflix;
