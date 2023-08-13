@@ -5,18 +5,43 @@ import amazon from "./amazon.js"
 import disney from "./disney.js"
 
 
-cron.schedule("*/15 * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
     try {
         console.log("inició")
         await netflix();
         console.log("netflix terminó")
-        await hbo();
-        console.log("hbo terminó")
-        console.log("termino")
     }
     catch (e) {
         console.error(e)
     }
-    // await amazon();
-    // await disney();
 })
+
+cron.schedule("15 * * * *", async () => {
+    try {
+        await hbo();
+        console.log("hbo terminó")
+    }
+    catch (e) {
+        console.error(e)
+    }
+})
+
+// cron.schedule("30 * * * *", async () => {
+//     try {
+//         await amazon();
+//         console.log("amazon terminó")
+//     }
+//     catch (e) {
+//         console.error(e)
+//     }
+// })
+
+// cron.schedule("45 * * * *", async () => {
+//     try {
+//         await disney();
+//         console.log("disney terminó")
+//     }
+//     catch (e) {
+//         console.error(e)
+//     }
+// })
