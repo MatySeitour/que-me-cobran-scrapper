@@ -1,8 +1,13 @@
 import puppeteer from "puppeteer";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const amazon = async () => {
     const browser = await puppeteer.launch({
         headless: "new",
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+
     });
     const page = await browser.newPage();
     await page.goto("https://selectra.com.ar/streaming/amazon-prime-video");
@@ -53,8 +58,17 @@ const amazon = async () => {
         return plan;
     });
 
-    console.log(data);
-    return data
+    for (const plan of data) {
+        console.log("empieza a ejecutar netflix")
+        await prisma.plan.update({
+            where: {
+                id: plan.id,
+            },
+            data: {
+                price: plan.price,
+            },
+        });
+    }
 }
 
 export default amazon;

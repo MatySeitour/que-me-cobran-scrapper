@@ -25,23 +25,3 @@ cron.schedule("15 * * * *", async () => {
         console.error(e)
     }
 })
-
-// cron.schedule("30 * * * *", async () => {
-//     try {
-//         await amazon();
-//         console.log("amazon terminó")
-//     }
-//     catch (e) {
-//         console.error(e)
-//     }
-// })
-
-// cron.schedule("45 * * * *", async () => {
-//     try {
-//         await disney();
-//         console.log("disney terminó")
-//     }
-//     catch (e) {
-//         console.error(e)
-//     }
-// })

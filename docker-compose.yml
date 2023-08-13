@@ -2,7 +2,8 @@ version: "3.1"
 
 services:
   cron:
-    image: ghcr.io/matyseitour/que-me-cobran-scrapper:latest
+    build: .
+    # image: ghcr.io/matyseitour/que-me-cobran-scrapper:latest
     restart: on-failure
     volumes:
       - "./.env:/app/.env"
@@ -11,5 +12,5 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.40'
+          cpus: "0.40"
           memory: 400M

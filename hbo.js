@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer, { Page } from "puppeteer";
 import { PrismaClient } from "@prisma/client";
 import sleep from "./utils/sleep.js";
 import log from "./utils/log.js";
@@ -13,10 +13,23 @@ const hbo = async () => {
     try {
         log("antes de abrir el navegador")
         const page = await browser.newPage();
-        await page.goto("https://www.hbomax.com/ar/es");
+        await page.setRequestInterception(true);
+        page.on('request', interceptedRequest => {
+            if (interceptedRequest.isInterceptResolutionHandled()) return;
+            if (
+                interceptedRequest.url().split("?")[0].endsWith('.mp4') ||
+                interceptedRequest.url().split("?")[0].endsWith('.svg') ||
+                interceptedRequest.url().split("?")[0].endsWith('.png') ||
+                interceptedRequest.url().split("?")[0].endsWith('.jpg')
+
+            )
+                interceptedRequest.abort();
+            else interceptedRequest.continue();
+        });
+        await page.goto("https://selectra.com.ar/streaming/hbo-max");
         log("hacia la página de hbo")
         await sleep(2000);
-        await page.waitForSelector(".plan-price");
+        await page.waitForSelector(".content-offer__figure");
         const result = await page.evaluate((prices) => {
             let arr = [];
             const priceHbo = document.querySelectorAll(prices);
@@ -24,10 +37,8 @@ const hbo = async () => {
                 arr.push(Array(price.innerText));
             }
 
-            return arr.filter(
-                (item, index) => index === 3 || index === 4 || index === 5
-            );
-        }, ".plan-price");
+            return arr;
+        }, ".content-offer__figure");
 
         log("antes de cerrar el navegador de hbo")
 
@@ -42,12 +53,7 @@ const hbo = async () => {
                     id: 48,
                     price: Number(Array(item)
                         .join("")
-                        .split("$")[1]
-                        .split(/\s+/)
-                        .join("")
-                        .replace(",", ".")
-                        .split(".00")
-                        .join("")),
+                        .split("$")[1].replaceAll('.', '')),
                     benefits:
                         "Puedes ver en 3 dispositivos a la vez.Hasta 5 perfiles para toda la familia.",
                 };
@@ -57,14 +63,7 @@ const hbo = async () => {
                     id: 49,
                     price: Number(Array(item)
                         .join("")
-                        .split("$")[1]
-                        .split(/\s+/)
-                        .join("")
-                        .replace(",", ".")
-                        .split(".00")
-                        .join("")
-                        .split(".")
-                        .join("")),
+                        .split("$")[1].replaceAll('.', '')),
                     benefits:
                         "Disfruta en todas tus pantallas.Contenido en alta definición y 4K.",
                 };
@@ -74,14 +73,7 @@ const hbo = async () => {
                     id: 50,
                     price: Number(Array(item)
                         .join("")
-                        .split("$")[1]
-                        .split(/\s+/)
-                        .join("")
-                        .replace(",", ".")
-                        .split(".00")
-                        .join("")
-                        .split(".")
-                        .join("")),
+                        .split("$")[1].replaceAll('.', '')),
                     benefits:
                         "Chromecast y Airplay disponibles.Descarga y disfruta donde sea.Ahorra 3 meses.",
                 };
@@ -101,6 +93,8 @@ const hbo = async () => {
                 },
             });
         }
+
+        console.log(hboPlans)
     }
     catch (e) {
         console.error(e);
