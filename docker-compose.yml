@@ -3,6 +3,13 @@ version: "3.1"
 services:
   cron:
     image: ghcr.io/matyseitour/que-me-cobran-scrapper:latest
-    restart: unless-stopped
+    restart: on-failure
     volumes:
       - "./.env:/app/.env"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.40'
+          memory: 400M
