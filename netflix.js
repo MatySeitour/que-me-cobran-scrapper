@@ -16,6 +16,7 @@ const netflix = async () => {
         const page = await browser.newPage();
         await page.goto("https://help.netflix.com/es/node/24926/ar");
         log("va a la pagina")
+        await sleep(2000);
         await page.waitForSelector(
             "body > div > div > div > div > div > section > div > div > div:nth-child(3) > ul > li > p"
         );
