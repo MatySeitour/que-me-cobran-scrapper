@@ -5,7 +5,7 @@ import amazon from "./amazon.js"
 import disney from "./disney.js"
 
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("*/15 * * * *", async () => {
     try {
         console.log("inició")
         await netflix();
