@@ -1,6 +1,9 @@
 import puppeteer from "puppeteer";
-import { PrismaClient } from "@prisma/client";
 import log from "./utils/log.js";
+import { PrismaClient } from "@prisma/client";
+import discordMessage from "./utils/discord_message.js";
+import sleep from "./utils/sleep.js";
+import onlyHtml from "./utils/only_html.js";
 
 const prisma = new PrismaClient();
 
@@ -12,20 +15,9 @@ const star = async () => {
 
     try {
         const page = await browser.newPage();
-        await page.setRequestInterception(true);
-        page.on('request', interceptedRequest => {
-            if (interceptedRequest.isInterceptResolutionHandled()) return;
-            if (
-                interceptedRequest.url().split("?")[0].endsWith('.mp4') ||
-                interceptedRequest.url().split("?")[0].endsWith('.svg') ||
-                interceptedRequest.url().split("?")[0].endsWith('.png') ||
-                interceptedRequest.url().split("?")[0].endsWith('.jpg')
-
-            )
-                interceptedRequest.abort();
-            else interceptedRequest.continue();
-        });
+        await onlyHtml(page)
         await page.goto("https://www.starplus.com/es-ar?cid=DSS-Search-Google-71700000085791494-&s_kwcid=AL!8468!3!576717262205!b!!g!!precio%20star%20plus&gad=1&gclid=CjwKCAjw_uGmBhBREiwAeOfsd4ttE9qqO-pwigXBDAgAEuC6iUPCqaNRU_qbCJ3BRZADBeF5dW-s2BoCuVgQAvD_BwE&gclsrc=aw.ds");
+        await sleep(2000);
         await page.waitForSelector("h3");
         const result = await page.evaluate((prices) => {
             let arr = [];
@@ -89,6 +81,7 @@ const star = async () => {
     }
     catch (e) {
         await browser.close()
+        await discordMessage("Star+", e)
         console.error(e)
     }
 }

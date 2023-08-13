@@ -1,6 +1,9 @@
 import puppeteer from "puppeteer";
-import { PrismaClient } from "@prisma/client";
 import log from "./utils/log.js";
+import { PrismaClient } from "@prisma/client";
+import discordMessage from "./utils/discord_message.js";
+import sleep from "./utils/sleep.js";
+import onlyHtml from "./utils/only_html.js";
 
 const prisma = new PrismaClient();
 
@@ -11,20 +14,9 @@ const paramount = async () => {
     });
     try {
         const page = await browser.newPage();
-        await page.setRequestInterception(true);
-        page.on('request', interceptedRequest => {
-            if (interceptedRequest.isInterceptResolutionHandled()) return;
-            if (
-                interceptedRequest.url().split("?")[0].endsWith('.mp4') ||
-                interceptedRequest.url().split("?")[0].endsWith('.svg') ||
-                interceptedRequest.url().split("?")[0].endsWith('.png') ||
-                interceptedRequest.url().split("?")[0].endsWith('.jpg')
-
-            )
-                interceptedRequest.abort();
-            else interceptedRequest.continue();
-        });
+        await onlyHtml(page)
         await page.goto("https://www.paramountplus.com/ar/");
+        await sleep(2000);
         await page.waitForSelector("#main-container > section.hero.aa-section.aa-primary-upsell.illuminate > section > div > div > div.upsell-text > strong");
         const result = await page.evaluate((prices) => {
             let arr = [];
@@ -69,6 +61,7 @@ const paramount = async () => {
         }
     }
     catch (e) {
+        await discordMessage("Paramount+", e)
         await browser.close()
         console.error(e)
     }

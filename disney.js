@@ -1,5 +1,9 @@
 import puppeteer from "puppeteer";
+import log from "./utils/log.js";
 import { PrismaClient } from "@prisma/client";
+import discordMessage from "./utils/discord_message.js";
+import sleep from "./utils/sleep.js";
+import onlyHtml from "./utils/only_html.js";
 
 const prisma = new PrismaClient();
 
@@ -10,19 +14,7 @@ const disney = async () => {
     });
     try {
         const page = await browser.newPage();
-        await page.setRequestInterception(true);
-        page.on('request', interceptedRequest => {
-            if (interceptedRequest.isInterceptResolutionHandled()) return;
-            if (
-                interceptedRequest.url().split("?")[0].endsWith('.mp4') ||
-                interceptedRequest.url().split("?")[0].endsWith('.svg') ||
-                interceptedRequest.url().split("?")[0].endsWith('.png') ||
-                interceptedRequest.url().split("?")[0].endsWith('.jpg')
-
-            )
-                interceptedRequest.abort();
-            else interceptedRequest.continue();
-        });
+        await onlyHtml(page)
         await page.goto("https://www.disneyplus.com/es-ar?cid=DSS-Search-Google-71700000075032759-&s_kwcid=AL!8468!3!631491014848!p!!g!!disney%20plus&gad=1&gclid=CjwKCAjw29ymBhAKEiwAHJbJ8lPo0suBn2G6T4_c4YjpWd02NMcI4ub2E1uXJx61ciwd_r5ns2ErYBoCwvkQAvD_BwE&gclsrc=aw.ds");
         await sleep(2000);
         await page.waitForSelector(".chart-grid span");
@@ -92,6 +84,7 @@ const disney = async () => {
         console.log(data)
     }
     catch (e) {
+        await discordMessage("Disney+", e)
         await browser.close()
         console.error(e)
     }

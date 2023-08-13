@@ -1,6 +1,9 @@
 import puppeteer from "puppeteer";
-import { PrismaClient } from "@prisma/client";
 import log from "./utils/log.js";
+import { PrismaClient } from "@prisma/client";
+import discordMessage from "./utils/discord_message.js";
+import sleep from "./utils/sleep.js";
+import onlyHtml from "./utils/only_html.js";
 
 const prisma = new PrismaClient();
 
@@ -13,19 +16,9 @@ const spotify = async () => {
     try {
         const page = await browser.newPage();
         await page.setRequestInterception(true);
-        page.on('request', interceptedRequest => {
-            if (interceptedRequest.isInterceptResolutionHandled()) return;
-            if (
-                interceptedRequest.url().split("?")[0].endsWith('.mp4') ||
-                interceptedRequest.url().split("?")[0].endsWith('.svg') ||
-                interceptedRequest.url().split("?")[0].endsWith('.png') ||
-                interceptedRequest.url().split("?")[0].endsWith('.jpg')
-
-            )
-                interceptedRequest.abort();
-            else interceptedRequest.continue();
-        });
+        await onlyHtml(page)
         await page.goto("https://www.spotify.com/ar/premium/?utm_source=ar-en_brand_contextual_text&utm_medium=paidsearch&utm_campaign=alwayson_latam_ar_premiumbusiness_core_brand+contextual-desktop+text+broad+ar-en+google&gad=1&gclid=CjwKCAjw_uGmBhBREiwAeOfsdyvpaI79rTdGCXvLQtAbTrYLxkQwf0DrjD-BdlgLhaEO5OPmrtX3IBoCAUsQAvD_BwE&gclsrc=aw.ds");
+        await sleep(2000);
         await page.waitForSelector(".sc-irqbAE");
         const result = await page.evaluate((prices) => {
             let arr = [];
@@ -95,6 +88,7 @@ const spotify = async () => {
         console.log(data)
     }
     catch (e) {
+        await discordMessage("Spotify", e)
         await browser.close()
         console.error(e)
     }

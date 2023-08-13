@@ -1,6 +1,9 @@
 import puppeteer from "puppeteer";
-import { PrismaClient } from "@prisma/client";
 import log from "./utils/log.js";
+import { PrismaClient } from "@prisma/client";
+import discordMessage from "./utils/discord_message.js";
+import sleep from "./utils/sleep.js";
+import onlyHtml from "./utils/only_html.js";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +17,8 @@ const netflix = async () => {
         });
         log("browser")
         const page = await browser.newPage();
-        await page.goto("https://help.netflix.com/es/node/24926/ar");
+        await onlyHtml(page)
+        await page.goto("https://help.netflix.com/es/node/24asdsad926/ar");
         log("va a la pagina")
         await sleep(2000);
         await page.waitForSelector(
@@ -77,9 +81,12 @@ const netflix = async () => {
         }
     }
     catch (e) {
+        await discordMessage("Netflix", e)
         console.error(e)
     }
 
 }
+
+netflix();
 
 export default netflix;
