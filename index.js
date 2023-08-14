@@ -7,7 +7,7 @@ import paramount from "./paramount.js"
 import star from "./star.js"
 import crunchyroll from "./crunchyroll.js"
 import spotify from "./spotify.js"
-import time from "./time.js"
+import discordMessage from "./utils/discord_message.js"
 
 cron.schedule("0 1 * * *", async () => {
     try {
@@ -16,6 +16,7 @@ cron.schedule("0 1 * * *", async () => {
         console.log("netflix terminó", process.env.TZ)
     }
     catch (e) {
+        await discordMessage("Netflix", e)
         console.error(e)
     }
 })
@@ -27,6 +28,7 @@ cron.schedule("0 2 * * *", async () => {
         console.log("hbo terminó")
     }
     catch (e) {
+        await discordMessage("HBO", e)
         console.error(e)
     }
 })
@@ -37,6 +39,7 @@ cron.schedule("0 3 * * *", async () => {
         console.log("amazon terminó", process.env.TZ)
     }
     catch (e) {
+        await discordMessage("Amazon", e)
         console.error(e)
     }
 })
@@ -47,6 +50,7 @@ cron.schedule("0 4 * * *", async () => {
         console.log("disney terminó", process.env.TZ)
     }
     catch (e) {
+        await discordMessage("Disney+", e)
         console.error(e)
     }
 })
@@ -57,6 +61,7 @@ cron.schedule("0 5 * * *", async () => {
         console.log("paramount terminó", process.env.TZ)
     }
     catch (e) {
+        await discordMessage("Paramount+", e)
         console.error(e)
     }
 })
@@ -67,6 +72,7 @@ cron.schedule("0 6 * * *", async () => {
         console.log("star terminó", process.env.TZ)
     }
     catch (e) {
+        await discordMessage("Star+", e)
         console.error(e)
     }
 })
@@ -77,6 +83,7 @@ cron.schedule("0 7 * * *", async () => {
         console.log("crunchyroll terminó", process.env.TZ)
     }
     catch (e) {
+        await discordMessage("Crunchyroll", e)
         console.error(e)
     }
 })
@@ -88,6 +95,7 @@ cron.schedule("0 23 * * *", async () => {
         console.log("spotify terminó", process.env.TZ)
     }
     catch (e) {
+        await discordMessage("Spotify", e)
         console.error(e)
     }
 })
