@@ -30,3 +30,5 @@ const hbo = async () => {
 }
 
 export default hbo;
+
+hbo();
