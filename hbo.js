@@ -13,8 +13,29 @@ const hbo = async () => {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     try {
+        const context = browser.defaultBrowserContext();
+        await context.overridePermissions("https://www.hbomax.com/ar/es", ['geolocation']);
+
         const page = await browser.newPage();
         await onlyHtml(page);
+        await page.evaluateOnNewDocument(() => {
+            navigator.geolocation.getCurrentPosition = cb => {
+                setTimeout(() => {
+                    cb({
+                        'coords': {
+
+                            accuacy: 21,
+                            altitude: null,
+                            altitudeAccuracy: null,
+                            heading: null,
+                            latitude: -34.6795778696406,
+                            longitude: -58.702672356111435,
+                            speed: null
+                        }
+                    })
+                }, 1000)
+            }
+        });
         await page.goto("https://www.hbomax.com/ar/es", { waitUntil: 'networkidle0' }, { timeout: 1000 });
         const data = await page.evaluate(() => document.querySelector('*').outerHTML);
 
