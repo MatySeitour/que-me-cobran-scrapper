@@ -16,9 +16,9 @@ const star = async () => {
     try {
         const page = await browser.newPage();
         await onlyHtml(page)
-        await page.goto("https://www.starplus.com/es-ar?cid=DSS-Search-Google-71700000085791494-&s_kwcid=AL!8468!3!576717262205!b!!g!!precio%20star%20plus&gad=1&gclid=CjwKCAjw_uGmBhBREiwAeOfsd4ttE9qqO-pwigXBDAgAEuC6iUPCqaNRU_qbCJ3BRZADBeF5dW-s2BoCuVgQAvD_BwE&gclsrc=aw.ds");
+        await page.goto("https://www.flow.com.ar/plataformas-de-streaming/star-plus");
         await sleep(2000);
-        await page.waitForSelector("h3");
+        await page.waitForSelector("#page-69c30398a5 > div:nth-child(29) > div > div > div.responsivegrid.aem-GridColumn.aem-GridColumn--default--12 > div > div:nth-child(2) > div > div > div > div.featuresandprice.aem-GridColumn.aem-GridColumn--default--12 > div > div > div.feature-and-price__price.col.s12.m4.offset-m1.l3.offset-l2 > div.feature-and-price__success > div > p.feature-and-price__success--price > span");
         const result = await page.evaluate((prices) => {
             let arr = [];
             const pricesNetflix = document.querySelectorAll(prices);
@@ -28,42 +28,58 @@ const star = async () => {
                 }
             }
             return arr;
-        }, "h3");
+        }, "#page-69c30398a5 > div:nth-child(29) > div > div > div.responsivegrid.aem-GridColumn.aem-GridColumn--default--12 > div > div:nth-child(2) > div > div > div > div.featuresandprice.aem-GridColumn.aem-GridColumn--default--12 > div > div > div.feature-and-price__price.col.s12.m4.offset-m1.l3.offset-l2 > div.feature-and-price__success > div > p.feature-and-price__success--price > span");
+
+        await page.waitForSelector(".price__number");
+        const result2 = await page.evaluate((prices) => {
+            let arr = [];
+            const pricesNetflix = document.querySelectorAll(prices);
+            for (const price of pricesNetflix) {
+                if (price) {
+                    arr.push(price.innerText);
+                }
+            }
+            return arr;
+        }, ".price__number");
+
+        await onlyHtml(page)
+        await page.goto("https://selectra.com.ar/streaming/star-plus");
+        await sleep(2000);
+        await page.waitForSelector("#content-with-summary > div:nth-child(1) > div.table--swap.table--responsive > table > tbody > tr > td:nth-child(2)");
+        const result3 = await page.evaluate((prices) => {
+            let arr = [];
+            const pricesNetflix = document.querySelectorAll(prices);
+            for (const price of pricesNetflix) {
+                if (price) {
+                    arr.push(price.innerText);
+                }
+            }
+            return arr;
+        }, "#content-with-summary > div:nth-child(1) > div.table--swap.table--responsive > table > tbody > tr > td:nth-child(2)");
+
+        const data = [
+            {
+                name: "Star+/1 mes",
+                id: 70,
+                price: (Number(result) / 1.74).toFixed(0),
+                benefits: "Puedes acceder a estrenos de películas, series y eventos deportivos de ESPN en cualquier dispositivo por 1 mes."
+            },
+            {
+                name: "Star+ - Disney+/1 mes",
+                id: 71,
+                price: (Number(result2.join("").split("$")[1].replace(/[.]/g, "")) / 1.74).toFixed(0),
+                benefits: "Puedes acceder a estrenos de películas, series y eventos deportivos de ESPN en cualquier dispositivo por 1 mes. Puedes acceder a contenido de Disney+",
+            },
+            {
+                name: "Star+, Disney+, y LIONSGATE+/12 meses",
+                id: 72,
+                price: ((Number(Array(result3.join("").split(" ")[0]).join("").split("$")[1].replace(/[.]/g, "")) / 1.74)).toFixed(0),
+                benefits:
+                    "Puedes acceder a estrenos de películas, series y eventos deportivos de ESPN en cualquier dispositivo por 1 mes. Puedes acceder a contenido de Disney+. Puedes acceder a contenido de Lionsgate+",
+            }
+        ]
 
         await browser.close()
-
-        const getPrices = result.filter((price, index) => {
-            if (index === 1 || index === 2 || index === 3) {
-                return price;
-            }
-        })
-
-        const data = getPrices.map((item, index) => {
-            if (index == 0) {
-                return {
-                    name: "Star+/1 mes",
-                    id: 70,
-                    price: (Number(Array(item).join("").split("ARS")[1].split("/")[0].split(/\s+/)[1].replaceAll('.', '')) / 1.74).toFixed(0),
-                    benefits: "Puedes acceder a estrenos de películas, series y eventos deportivos de ESPN en cualquier dispositivo por 1 mes.",
-                };
-            } else if (index == 1) {
-                return {
-                    name: "Star+ y Disney+/1 mes",
-                    id: 71,
-                    price: (Number(Array(item).join("").split("ARS")[1].split("/")[0].split(/\s+/)[1].replaceAll('.', '')) / 1.74).toFixed(0),
-                    benefits:
-                        "Puedes acceder a contenido de Disney+ y Star+ por 1 mes.",
-                };
-            } else {
-                return {
-                    name: "Star+/12 meses",
-                    id: 72,
-                    price: (Number(Array(item).join("").split("ARS")[1].split("/")[0].split(/\s+/)[1].replaceAll('.', '')) / 1.74).toFixed(0),
-                    benefits:
-                        "Puedes acceder a estrenos de películas, series y eventos deportivos de ESPN en cualquier dispositivo por 12 meses.",
-                };
-            }
-        })
 
         for (const plan of data) {
             log("empieza a ejecutar star")
@@ -72,7 +88,9 @@ const star = async () => {
                     id: plan.id,
                 },
                 data: {
+                    name: plan.name,
                     price: Number(plan.price),
+                    benefits: plan.benefits
                 },
             });
         }
