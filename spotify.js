@@ -74,7 +74,7 @@ const spotify = async () => {
         })
 
         for (const plan of data) {
-            log("empieza a ejecutar star")
+            log("empieza a ejecutar spotify")
             await prisma.plan.update({
                 where: {
                     id: plan.id,
