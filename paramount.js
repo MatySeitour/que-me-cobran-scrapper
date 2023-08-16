@@ -15,9 +15,9 @@ const paramount = async () => {
     try {
         const page = await browser.newPage();
         await onlyHtml(page)
-        await page.goto("https://www.paramountplus.com/ar/");
+        await page.goto("https://selectra.com.ar/streaming/paramount-plus");
         await sleep(2000);
-        await page.waitForSelector("#main-container > section.hero.aa-section.aa-primary-upsell.illuminate > section > div > div > div.upsell-text > strong");
+        await page.waitForSelector(".text--green");
         const result = await page.evaluate((prices) => {
             let arr = [];
             const pricesNetflix = document.querySelectorAll(prices);
@@ -27,12 +27,12 @@ const paramount = async () => {
                 }
             }
             return arr;
-        }, "#main-container > section.hero.aa-section.aa-primary-upsell.illuminate > section > div > div > div.upsell-text > strong");
+        }, ".text--green");
 
         await browser.close();
 
-        const priceParamount = Array(result).join("").split("$")[1].split("al")[0];
-
+        const getPrice = result[0];
+        const priceParamount = getPrice.split("$")[1].replace(",", ".");
         let data = [
             {
                 name: "1 mes",
@@ -48,6 +48,7 @@ const paramount = async () => {
             }
         ]
 
+
         for (const plan of data) {
             log("empieza a ejecutar paramount")
             await prisma.plan.update({
@@ -59,6 +60,8 @@ const paramount = async () => {
                 },
             });
         }
+
+        console.log(data)
     }
     catch (e) {
         await discordMessage("Paramount+", e)
