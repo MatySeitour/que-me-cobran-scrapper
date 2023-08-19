@@ -12,7 +12,6 @@ const netflix = async () => {
         log("antes de abrir el navegador")
         const browser = await puppeteer.launch({
             headless: "new",
-            // executablePath: '/usr/bin/google-chrome',
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
         log("browser")
@@ -22,7 +21,7 @@ const netflix = async () => {
         log("va a la pagina")
         await sleep(2000);
         await page.waitForSelector(
-            "body > div > div > div > div > div > section > div > div > div:nth-child(3) > ul > li > p"
+            "body > div.global-container > div.global-content > div > div.pane-wrapper > div.left-pane > section.kb-article.kb-article-variant.gradient > div > div > div > ul > li > p"
         );
         const result = await page.evaluate((prices) => {
             let arr = [];
@@ -31,42 +30,51 @@ const netflix = async () => {
                 arr.push(Array(price.innerText).join("").split("al")[0]);
             }
             return arr;
-        }, "body > div > div > div > div > div > section > div > div > div:nth-child(3) > ul > li > p");
+        }, "body > div.global-container > div.global-content > div > div.pane-wrapper > div.left-pane > section.kb-article.kb-article-variant.gradient > div > div > div > ul > li > p");
+
+        // console.log(result)
 
         browser.close();
 
         log("cierra el navegador")
 
-        const data = result.map((item) => {
-            let plan = {
-                name: "",
-                price: 0,
-                benefits: "",
-                id: 0,
-            };
-            let b = item.split(/\s+/).join("");
-            let c = Array(b).join("").split("ARS");
-            let d = c[0].substring(0, c[0].length - 1);
-            plan.name = d;
-            plan.price = Number(c[1]);
+        const data = result.map((item, index) => {
+            // let d = c[0].substring(0, c[0].length - 1);
+            // plan.price = Number(c[1]);
+            let name = item.split(/\s+/).join("").split(":");
+            let c = Number(Array(name[1]).join("").split("ARS")[0]);
 
-            if (d === "Básico") {
-                plan.id = 1;
-                plan.benefits =
-                    "Puedes ver contenido en 1 dispositivo compatible a la vez.Puedes ver en HD.Puedes descargar contenido en 1 dispositivo compatible a la vez.";
-            } else if (d === "Estándar") {
-                plan.id = 2;
-                plan.benefits =
-                    "Puedes ver contenido en 2 dispositivos compatibles a la vez.Puedes ver en Full HD.Puedes descargar contenido en 2 dispositivos compatibles a la vez.Opción para agregar hasta 1 miembro extra que no viva contigo.";
-            } else if (d === "Premium") {
-                plan.id = 3;
-                plan.benefits =
-                    "Puedes ver contenido en 4 dispositivos compatibles a la vez.Puedes ver en Ultra HD.Puedes descargar contenido en 6 dispositivos compatibles a la vez.Opción para agregar hasta 2 miembros extras que no vivan contigo.";
+            if (index === 0) {
+                let plan = {
+                    id: 1,
+                    name: name[0],
+                    benefits: "Puedes ver contenido en 1 dispositivo compatible a la vez.Puedes ver en HD.Puedes descargar contenido en 1 dispositivo compatible a la vez.",
+                    price: c
+                }
+                return plan;
+            } else if (index === 1) {
+                let plan = {
+                    id: 2,
+                    name: name[0],
+                    benefits: "Puedes ver contenido en 2 dispositivos compatibles a la vez.Puedes ver en Full HD.Puedes descargar contenido en 2 dispositivos compatibles a la vez.Opción para agregar hasta 1 miembro extra que no viva contigo",
+                    price: c
+                }
+                return plan;
+
+            } else if (index === 2) {
+                let plan = {
+                    id: 3,
+                    name: name[0],
+                    benefits: "Puedes ver contenido en 4 dispositivos compatibles a la vez.Puedes ver en Ultra HD.Puedes descargar contenido en 6 dispositivos compatibles a la vez.Opción para agregar hasta 2 miembros extras que no vivan contigo.",
+                    price: c
+                }
+                return plan;
+
             }
-            return plan;
         });
 
         log("antes de ejecutar prisma")
+        console.log(data)
 
         for (const plan of data) {
             log("empieza a ejecutar netflix")
@@ -88,3 +96,4 @@ const netflix = async () => {
 }
 
 export default netflix;
+netflix()
