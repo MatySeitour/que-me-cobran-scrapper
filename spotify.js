@@ -19,7 +19,7 @@ const spotify = async () => {
         await onlyHtml(page)
         await page.goto("https://www.spotify.com/ar/premium/?utm_source=ar-en_brand_contextual_text&utm_medium=paidsearch&utm_campaign=alwayson_latam_ar_premiumbusiness_core_brand+contextual-desktop+text+broad+ar-en+google&gad=1&gclid=CjwKCAjw_uGmBhBREiwAeOfsdyvpaI79rTdGCXvLQtAbTrYLxkQwf0DrjD-BdlgLhaEO5OPmrtX3IBoCAUsQAvD_BwE&gclsrc=aw.ds");
         await sleep(2000);
-        await page.waitForSelector(".sc-irqbAE");
+        await page.waitForSelector("#plans > article > div > div > p");
         const result = await page.evaluate((prices) => {
             let arr = [];
             const pricesNetflix = document.querySelectorAll(prices);
@@ -27,12 +27,15 @@ const spotify = async () => {
                 arr.push(price.innerText);
             }
             return arr;
-        }, ".sc-irqbAE");
+        }, "#plans > article > div > div > p");
 
         await browser.close()
 
-        const getPrices = result.filter((item) => {
-            return item.includes("$")
+
+        const getPrices = result.filter((item, index) => {
+            if (index === 0 || index === 3 || index === 6 || index === 9) {
+                return item.includes("$")
+            }
         })
 
 
@@ -45,8 +48,8 @@ const spotify = async () => {
             };
             if (index === 0) {
                 plan.name = "Individual",
-                    plan.price = Number(price.split("*")[0].split("$")[1].split(" ").join("").split(",")[0].split(/\s+/)[1]),
-                    plan.benefits = "Música sin anuncios para 1 cuenta.Escuchá tus canciones en cualquier lugar, incluso sin conexión.Reproducción on-demand."
+                    plan.price = Number(price.split("*")[0].split("$")[1].split(" ").join("").split(",")[0].split(/\s+/)[1])
+                plan.benefits = "Música sin anuncios para 1 cuenta.Escuchá tus canciones en cualquier lugar, incluso sin conexión.Reproducción on-demand."
                 plan.id = 76
                 return plan;
             }
