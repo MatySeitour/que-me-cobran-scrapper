@@ -32,15 +32,13 @@ const netflix = async () => {
             return arr;
         }, "body > div.global-container > div.global-content > div > div.pane-wrapper > div.left-pane > section.kb-article.kb-article-variant.gradient > div > div > div > ul > li > p");
 
-        // console.log(result)
 
         browser.close();
 
         log("cierra el navegador")
 
         const data = result.map((item, index) => {
-            // let d = c[0].substring(0, c[0].length - 1);
-            // plan.price = Number(c[1]);
+
             let name = item.split(/\s+/).join("").split(":");
             let c = Number(Array(name[1]).join("").split("ARS")[0]);
 
@@ -96,4 +94,3 @@ const netflix = async () => {
 }
 
 export default netflix;
-netflix()
