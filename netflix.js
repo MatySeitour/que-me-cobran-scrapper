@@ -40,9 +40,9 @@ const netflix = async () => {
         const data = result.map((item, index) => {
 
             let name = item.split(/\s+/).join("").split(":");
-            let c = Number(Array(name[1]).join("").split("ARS")[0]);
 
             if (index === 0) {
+                let c = Number(Array(name[1]).join("").split("ARS")[0]);
                 let plan = {
                     id: 1,
                     name: name[0],
@@ -51,20 +51,22 @@ const netflix = async () => {
                 }
                 return plan;
             } else if (index === 1) {
+                let d = Number(Array(name[1]).join("").split("ARS")[1]);
                 let plan = {
                     id: 2,
                     name: name[0],
                     benefits: "Puedes ver contenido en 2 dispositivos compatibles a la vez.Puedes ver en Full HD.Puedes descargar contenido en 2 dispositivos compatibles a la vez.Opción para agregar hasta 1 miembro extra que no viva contigo",
-                    price: c
+                    price: d
                 }
                 return plan;
 
             } else if (index === 2) {
+                let d = Number(Array(name[1]).join("").split("ARS")[1]);
                 let plan = {
                     id: 3,
                     name: name[0],
                     benefits: "Puedes ver contenido en 4 dispositivos compatibles a la vez.Puedes ver en Ultra HD.Puedes descargar contenido en 6 dispositivos compatibles a la vez.Opción para agregar hasta 2 miembros extras que no vivan contigo.",
-                    price: c
+                    price: d
                 }
                 return plan;
 
