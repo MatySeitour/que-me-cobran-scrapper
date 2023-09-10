@@ -18,7 +18,7 @@ const star = async () => {
         await onlyHtml(page)
         await page.goto("https://www.flow.com.ar/plataformas-de-streaming/star-plus");
         await sleep(2000);
-        await page.waitForSelector("#page-69c30398a5 > div:nth-child(29) > div > div > div.responsivegrid.aem-GridColumn.aem-GridColumn--default--12 > div > div:nth-child(2) > div > div > div > div.featuresandprice.aem-GridColumn.aem-GridColumn--default--12 > div > div > div.feature-and-price__price.col.s12.m4.offset-m1.l3.offset-l2 > div.feature-and-price__success > div > p.feature-and-price__success--price");
+        await page.waitForSelector(".feature-and-price__success--price");
         const result = await page.evaluate((prices) => {
             let arr = [];
             const pricesNetflix = document.querySelectorAll(prices);
@@ -28,7 +28,8 @@ const star = async () => {
                 }
             }
             return arr;
-        }, "#page-69c30398a5 > div:nth-child(29) > div > div > div.responsivegrid.aem-GridColumn.aem-GridColumn--default--12 > div > div:nth-child(2) > div > div > div > div.featuresandprice.aem-GridColumn.aem-GridColumn--default--12 > div > div > div.feature-and-price__price.col.s12.m4.offset-m1.l3.offset-l2 > div.feature-and-price__success > div > p.feature-and-price__success--price");
+        }, ".feature-and-price__success--price");
+
 
         await page.waitForSelector(".price__number");
         const result2 = await page.evaluate((prices) => {
