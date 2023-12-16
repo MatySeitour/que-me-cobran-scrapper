@@ -42,7 +42,8 @@ const netflix = async () => {
             let name = item.split(/\s+/).join("").split(":");
 
             if (index === 0) {
-                let c = Number(Array(name[1]).join("").split("ARS")[0]);
+                let c = Number(Array(name[1]).join("").split("ARS")[1]);
+                console.log("este es c", c)
                 let plan = {
                     id: 1,
                     name: name[0],
@@ -86,6 +87,8 @@ const netflix = async () => {
                     price: plan.price,
                 },
             });
+
+
         }
     }
     catch (e) {
