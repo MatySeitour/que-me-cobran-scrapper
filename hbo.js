@@ -67,7 +67,7 @@ const hbo = async () => {
                     id: plan.id,
                 },
                 data: {
-                    price: Number(plan.price),
+                    price: plan.price,
                 },
             });
         }
@@ -82,6 +82,5 @@ const hbo = async () => {
 
 }
 
-hbo()
 
 export default hbo;
