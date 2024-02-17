@@ -15,11 +15,9 @@ const crunchyroll = async () => {
     try {
         const page = await browser.newPage();
         await onlyHtml(page)
-        await page.goto("https://www.impuestito.com.ar/servicios");
+        await page.goto("https://www.crunchyroll.com/es/welcome");
         await sleep(2000);
-        const element = await page.waitForSelector("#__next > main > section > div.jsx-2955914765.services > div:nth-child(8)");
-        await element.click()
-        await page.waitForSelector("main > section > div.jsx-2955914765.services > div.ServiceCardstyles__Card-sc-8hdb9n-0.lnJacE > div.ServiceCardstyles__OptionGroup-sc-8hdb9n-3.iDrYJg.tiers > div:nth-child(1) > label > span:nth-child(2)");
+        await page.waitForSelector("h4[data-t]");
         const result = await page.evaluate((prices) => {
             let arr = [];
             const pricesNetflix = document.querySelectorAll(prices);
@@ -27,36 +25,31 @@ const crunchyroll = async () => {
                 arr.push(price.innerText);
             }
             return arr;
-        }, "main > section > div.jsx-2955914765.services > div.ServiceCardstyles__Card-sc-8hdb9n-0.lnJacE > div.ServiceCardstyles__OptionGroup-sc-8hdb9n-3.iDrYJg.tiers > div:nth-child(1) > label > span:nth-child(2)");
-
-        await page.waitForSelector("#__next > main > section > div.jsx-2955914765.services > div.ServiceCardstyles__Card-sc-8hdb9n-0.lnJacE > div.ServiceCardstyles__OptionGroup-sc-8hdb9n-3.iDrYJg.tiers > div:nth-child(2) > label > span:nth-child(2)");
-        const result2 = await page.evaluate((prices) => {
-            let arr = [];
-            const pricesNetflix = document.querySelectorAll(prices);
-            for (const price of pricesNetflix) {
-                arr.push(price.innerText);
-            }
-            return arr;
-        }, "#__next > main > section > div.jsx-2955914765.services > div.ServiceCardstyles__Card-sc-8hdb9n-0.lnJacE > div.ServiceCardstyles__OptionGroup-sc-8hdb9n-3.iDrYJg.tiers > div:nth-child(2) > label > span:nth-child(2)");
+        }, "h4[data-t]");
 
         await browser.close();
+
+
+        const planFan = result[0].split(",")[0];
+        const planMegaFanMonth = result[1].split(",")[0];
+        const planMegaFanYear = result[2].split(",")[0];
 
         let data = [
             {
                 name: "Fan/1 mes",
-                price: (Number(result.join("").split(" ")[0].split("$")[1].split(/\s+/)[1].replace(/[,]/g, ".")) / 1.75),
+                price: Number(planFan),
                 id: 73,
                 benefits: "Acceso ilimitado a animes dentro del catálogo de Crunchyroll sin publicidad.Nuevos episodios poco después de su transmisión en Japón.Disponible en 1 dispositivo al mismo tiempo.",
             },
             {
                 name: "Mega-Fan/1 mes",
-                price: (Number(result2.join("").split(" ")[0].split("$")[1].split(/\s+/)[1].replace(/[,]/g, ".")) / 1.75),
+                price: Number(planMegaFanMonth),
                 id: 74,
                 benefits: "Todos los beneficios del plan anterior.Disponible en 4 dispositivos al mismo tiempo.Visionado Sin Conexión.",
             },
             {
                 name: "Mega-Fan/12 meses",
-                price: 3799,
+                price: Number(planMegaFanYear),
                 id: 75,
                 benefits: "Todos los beneficios del plan anterior.16 % de descuento sobre el Plan Mensual (cargo cada 12 meses).",
             },
@@ -83,4 +76,5 @@ const crunchyroll = async () => {
 
 };
 
+crunchyroll();
 export default crunchyroll;

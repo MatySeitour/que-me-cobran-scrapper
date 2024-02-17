@@ -87,8 +87,6 @@ const netflix = async () => {
                     price: plan.price,
                 },
             });
-
-
         }
     }
     catch (e) {

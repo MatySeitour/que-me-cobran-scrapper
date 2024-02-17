@@ -15,9 +15,9 @@ const paramount = async () => {
     try {
         const page = await browser.newPage();
         await onlyHtml(page)
-        await page.goto("https://selectra.com.ar/streaming/paramount-plus");
+        await page.goto("https://www.paramountplus.com/ar/");
         await sleep(2000);
-        await page.waitForSelector(".text--green");
+        await page.waitForSelector("#main-container > section > section > div > div > div > strong");
         const result = await page.evaluate((prices) => {
             let arr = [];
             const pricesNetflix = document.querySelectorAll(prices);
@@ -27,12 +27,13 @@ const paramount = async () => {
                 }
             }
             return arr;
-        }, ".text--green");
+        }, "#main-container > section > section > div > div > div > strong");
 
         await browser.close();
 
+
         const getPrice = result[0];
-        const priceParamount = getPrice.split("$")[1].replace(",", ".");
+        const priceParamount = getPrice.split("$")[1].split(" ")[0]
         let data = [
             {
                 name: "1 mes",

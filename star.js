@@ -46,17 +46,18 @@ const star = async () => {
         await onlyHtml(page)
         await page.goto("https://selectra.com.ar/streaming/star-plus");
         await sleep(2000);
-        await page.waitForSelector("#content-with-summary > div:nth-child(1) > div:nth-child(5) > div.table--swap.table--responsive > table > tbody > tr > td:nth-child(2)");
+        await page.waitForSelector("#content-with-summary > div:nth-child(1) > div:nth-child(2) > div > table > tbody > tr > td:nth-child(2) > strong");
         const result3 = await page.evaluate((prices) => {
             let arr = [];
-            const pricesNetflix = document.querySelectorAll(prices);
-            for (const price of pricesNetflix) {
+            const pricesStar = document.querySelectorAll(prices);
+            for (const price of pricesStar) {
                 if (price) {
                     arr.push(price.innerText);
                 }
             }
             return arr;
-        }, "#content-with-summary > div:nth-child(1) > div:nth-child(5) > div.table--swap.table--responsive > table > tbody > tr > td:nth-child(2)");
+        }, "#content-with-summary > div:nth-child(1) > div:nth-child(2) > div > table > tbody > tr > td:nth-child(2) > strong");
+        await browser.close()
 
         const data = [
             {
@@ -80,9 +81,6 @@ const star = async () => {
             }
         ]
 
-
-        await browser.close()
-
         for (const plan of data) {
             log("empieza a ejecutar star")
             await prisma.plan.update({
@@ -105,6 +103,5 @@ const star = async () => {
         console.error(e)
     }
 }
-
 
 export default star;
